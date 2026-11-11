@@ -1,0 +1,43 @@
+{
+  "version": "1.0",
+  "status": "needs_original_shot_01_reference",
+  "characters": [],
+  "observed_older_board_style": "Round pale bald head, black oval eyes, dark casual clothing; warm amber interiors and cool rainy exteriors. Observation, not a replacement design.",
+  "reference_policy": {
+    "canonical_reference_path": null,
+    "sha256": null,
+    "approved": false,
+    "view_set": [
+      "front",
+      "three-quarter",
+      "profile"
+    ],
+    "keep_fixed": [
+      "face proportions",
+      "eyes",
+      "brows",
+      "skin tone",
+      "clothing",
+      "prop design",
+      "line weight",
+      "palette"
+    ],
+    "record_per_take": [
+      "model",
+      "seed_if_supported",
+      "prompt_hash",
+      "reference_hashes",
+      "source_duration",
+      "acceptance_reason"
+    ],
+    "seed_is_not_identity_lock": true
+  },
+  "continuity_review": [
+    "same face and outfit",
+    "hand and coin contact readable",
+    "prop count and screen direction",
+    "location geometry",
+    "lighting and wetness",
+    "expression matches story beat"
+  ]
+}

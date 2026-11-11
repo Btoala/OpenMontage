@@ -1,0 +1,35 @@
+{
+  "version": "1.0",
+  "status": "NOT_APPROVED",
+  "purpose": "Fill only after original shot, reference assets and live quote are ready.",
+  "shot_ids": [],
+  "tool": null,
+  "provider": null,
+  "model": null,
+  "operation": null,
+  "prompt": null,
+  "prompt_sha256": null,
+  "input_assets": [],
+  "parameters": {
+    "duration_seconds": null,
+    "resolution": null,
+    "aspect_ratio": "9:16",
+    "native_audio": null,
+    "seed": null
+  },
+  "quantity": 0,
+  "quote": {
+    "currency": null,
+    "maximum_total": null,
+    "quote_timestamp": null,
+    "quote_reference": null,
+    "retry_allowance": 0
+  },
+  "outputs": [],
+  "overwrite_existing": false,
+  "approval": {
+    "explicit_user_reply": null,
+    "approved_at": null
+  },
+  "execution_supported_by_this_kit": false
+}

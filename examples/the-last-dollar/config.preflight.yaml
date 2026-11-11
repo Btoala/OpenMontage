@@ -1,0 +1,27 @@
+# Valid native OpenMontage config; explicitly load this path. Not an auto-override.
+# This limits CostTracker when used; it cannot intercept arbitrary provider code.
+llm:
+  provider: openai
+  model: null
+budget:
+  mode: cap
+  total_usd: 0
+  reserve_pct: 0
+  single_action_approval_usd: 0
+  require_approval_for_new_paid_tool: true
+checkpoint:
+  policy: manual_all
+  storage_dir: projects
+output:
+  default_format: mp4
+  default_codec: libx264
+  default_audio_codec: aac
+  default_resolution: "1080x1920"
+  default_fps: 30
+  default_crf: 18
+paths:
+  pipeline_dir: projects
+  library_dir: library
+  styles_dir: styles
+  skills_dir: skills
+  output_dir: output

@@ -1,0 +1,102 @@
+{
+  "version": "1.0",
+  "title": "The Last Dollar",
+  "source_status": "49-shot original not recovered",
+  "pipeline": "animation",
+  "pipeline_ref": "pipeline_defs/animation.yaml",
+  "upstream_commit": "fecb9a1e3cc23ef84de30b272059457a427f16f8",
+  "target": {
+    "shots": 49,
+    "duration_min_seconds": 180,
+    "duration_max_seconds": 300,
+    "aspect_ratio": "9:16",
+    "fps_proposed": 30,
+    "width": 1080,
+    "height": 1920
+  },
+  "creative_constraints": {
+    "preserve_original_story": true,
+    "invent_missing_scenes": false,
+    "preserve_shot_01_style": true,
+    "character_identity_review_required": true,
+    "narration": "selective, exact recovered lines only",
+    "voice_name": "C. Jonathan",
+    "delivery": "soft, sad, restrained",
+    "designed_text_overlays": false,
+    "burn_captions": false,
+    "subtitle_sidecar": "optional; only measured final narration timestamps"
+  },
+  "recommendation": {
+    "animation_mode": "ai_video",
+    "render_runtime": "remotion",
+    "approval_status": "pending",
+    "reason": "Image-conditioned motion clips with repeatable references, then frame-accurate editing. Runtime launch must pass before locking.",
+    "runtime_options": {
+      "remotion": "Preferred native timeline, audio, optional caption support; browser launch currently blocked in this environment.",
+      "ffmpeg": "Available browser-free clip assembly and mixing; a creative/runtime decision before final composition.",
+      "hyperframes": "Alternative for authored SVG/GSAP character rigs; browser dependent and requires new rig work; not a match-preserving shortcut."
+    }
+  },
+  "provider_policy": {
+    "selected": null,
+    "native_candidates": [
+      "pika_video",
+      "higgsfield_video",
+      "kling_video"
+    ],
+    "existing_app_path": "Higgsfield connector plus imported output assets; separate from native API credentials",
+    "fallback_without_approval": false,
+    "auto_batch": false,
+    "automatic_paid_retries": 0
+  },
+  "approval_policy": {
+    "paid_generation_enabled": false,
+    "approved_total_usd": 0,
+    "approved_jobs": [],
+    "required_before_each_paid_action": [
+      "exact_tool",
+      "provider",
+      "model",
+      "operation",
+      "source_asset_sha256",
+      "full_prompt",
+      "duration",
+      "resolution",
+      "quantity",
+      "maximum_cost",
+      "overwrite_policy",
+      "explicit_user_reply"
+    ],
+    "all_existing_assets_immutable": true
+  },
+  "audio": {
+    "voice_name": "C. Jonathan",
+    "voice_id": "evRwgJsNor2dUBnqeWEo",
+    "native_tool": "elevenlabs_tts",
+    "model_candidate": "eleven_multilingual_v2",
+    "with_timestamps": true,
+    "generate_only_recovered_lines": true,
+    "music_status": "no approved music file recovered",
+    "music_required": true,
+    "sfx_required": [
+      "rain",
+      "footsteps",
+      "coins"
+    ],
+    "cue_positions": "unassigned until original shot actions and timing recovered",
+    "native_clip_audio": "quarantine and review; do not automatically retain model-generated voices/music",
+    "mix_plan": "separate narration, score, ambience, foley; duck score under actual narration; keep tails across approved cuts"
+  },
+  "production_batches": {
+    "sample_shots": null,
+    "sample_selection_rule": "After recovery choose 3 real shots covering identity, hand/coin interaction and emotional acting. No invented test scene.",
+    "maximum_batch_shots_proposed": 5,
+    "review_after_each_batch": true
+  },
+  "native_config": "config.preflight.yaml",
+  "native_config_auto_loaded": false,
+  "notes": [
+    "This JSON is project planning configuration for the agent/importer, not an upstream auto-run manifest.",
+    "All production checkpoints remain unset. No budget or creative approval is inferred from file creation."
+  ]
+}

@@ -1,0 +1,67 @@
+{
+  "version": "1.0",
+  "rates_checked": "2026-11-10 America/New_York",
+  "currency": "USD",
+  "rates_status": "Published provider rate snapshots, not live quotes or authorization.",
+  "routes": [
+    {
+      "id": "pika-h3-flex-i2v-1080p-upscaled",
+      "tool": "pika_video",
+      "usd_per_second": 0.035,
+      "rounding_reserve_seconds_per_shot": 1,
+      "native_resolution": "768p then upscale",
+      "source": "https://dev.pika.art/models/pika/pika-h3-flex/image-to-video/pricing"
+    },
+    {
+      "id": "pika-h3-flex-reference-1080p-upscaled",
+      "tool": "pika_video",
+      "usd_per_second": 0.075,
+      "rounding_reserve_seconds_per_shot": 1,
+      "note": "Image references only in these scenarios. Reference-video seconds add the same rate separately.",
+      "source": "https://dev.pika.art/models/pika/pika-h3-flex/reference-to-video/pricing"
+    },
+    {
+      "id": "kling-v3-standard-conservative-native-audio",
+      "tool": "kling_video",
+      "usd_per_second": 0.126,
+      "rounding_reserve_seconds_per_shot": 0,
+      "note": "Native wrapper does not expose generate_audio; budget conservatively. Audio-off published rate is 0.084/s but needs explicit supported request. Upstream estimator 0.02/s is stale.",
+      "source": "https://fal.ai/models/fal-ai/kling-video/v3/standard/image-to-video"
+    }
+  ],
+  "extra_allowances": {
+    "reference_and_shot_stills_usd": [
+      5,
+      15
+    ],
+    "narration_music_sfx_usd": [
+      5,
+      20
+    ],
+    "contingency_fraction": 0.2,
+    "basis": "Planning allowances, not provider quotes. Reuse existing approved assets/credits where available. No exact script length, music choice or shot map is known."
+  },
+  "scenario_assumptions": [
+    "49 requests per pass",
+    "245/343/490 requested seconds are 5/7/10 seconds per shot on average, not final cut length",
+    "1.5x and 2x are total successful generations including retakes, not extra multipliers",
+    "10-second clip preference is not automatically cheaper for per-second billing",
+    "Pika prompt rewrite and paid stem extraction not included; leave optional services off unless separately quoted",
+    "Exclude operator labor, taxes, subscriptions, hardware/cloud render rental and unverified prepaid entitlements"
+  ],
+  "budget_allowance_ranges_usd": {
+    "pika_i2v": [
+      30,
+      90
+    ],
+    "pika_reference_images": [
+      55,
+      140
+    ],
+    "kling_conservative": [
+      70,
+      195
+    ]
+  },
+  "paid_generation_authorized": false
+}
