@@ -7,10 +7,11 @@ llm:
   max_tokens: 4096
 
 budget:
-  mode: warn                     # observe | warn | cap
-  total_usd: 10.00
+  mode: cap                      # paid execution requires cap; no disable flag
+  total_usd: 0.00                 # installation-wide; explicitly raise before paid use
+  max_action_usd: 0.00            # maximum allowed reservation per request
   reserve_pct: 0.10              # holdback for retries / cleanup
-  single_action_approval_usd: 0.50
+  single_action_approval_usd: 0.50  # legacy reporting; every paid request needs approval
   require_approval_for_new_paid_tool: true
 
 checkpoint:

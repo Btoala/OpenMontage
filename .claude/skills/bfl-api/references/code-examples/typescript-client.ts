@@ -343,6 +343,9 @@ export class BFLClient {
     body?: Record<string, unknown>,
     maxRetries: number = 3
   ): Promise<Record<string, unknown>> {
+    if (!["GET", "HEAD"].includes(method.toUpperCase())) {
+      throw new Error("Paid reference example disabled; use an approved OpenMontage BFL tool");
+    }
     let lastError: Error | undefined;
 
     for (let attempt = 0; attempt < maxRetries; attempt++) {

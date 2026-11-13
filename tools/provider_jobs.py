@@ -12,6 +12,9 @@ import requests
 
 
 def request_json(method, url, *, headers=None, **kwargs):
+    if method.lower() not in {"get", "head"}:
+        from lib.spending import require_active_spend
+        require_active_spend()
     response = requests.request(method, url, headers=headers, timeout=60, **kwargs)
     response.raise_for_status()
     return response.json()

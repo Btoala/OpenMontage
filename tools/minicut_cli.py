@@ -56,6 +56,9 @@ def minicut_home() -> Path:
 
 def run(words: list[str], timeout: int = 900) -> tuple[int, dict[str, Any]]:
     """Run ``minicut <words>``; return its exit code and its last JSON line."""
+    if "--yes" in words:
+        from lib.spending import require_active_spend
+        require_active_spend()
     exe = find_cli()
     if not exe:
         raise RuntimeError("minicut not found. " + INSTALL_INSTRUCTIONS)

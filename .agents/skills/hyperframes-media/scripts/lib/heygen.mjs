@@ -84,6 +84,9 @@ export function heygenAuthHeaders() {
 
 // Authed JSON request against the v3 API; throws on a non-OK status.
 export async function heygenJSON(path, { method = "GET", headers = {}, body } = {}) {
+  if (!["GET", "HEAD"].includes(method.toUpperCase())) {
+    throw new Error("Standalone paid HeyGen calls are blocked. Use an approved OpenMontage tool request.");
+  }
   const opts = { method, headers: { ...headers } };
   if (body !== undefined) {
     opts.headers["Content-Type"] = "application/json";

@@ -414,11 +414,17 @@ class BaseTool(ABC):
     def __init_subclass__(cls, **kwargs: Any) -> None:
         """Auto-instrument every concrete execute() with Backlot events."""
         super().__init_subclass__(**kwargs)
+        from lib.spending import guarded_execute, guarded_provider_method
+        for name, method in list(cls.__dict__.items()):
+            if (name in {"generate", "submit", "_submit", "_generate", "_create_task"}
+                    or name.startswith(("_generate_", "_submit_"))):
+                if inspect.isfunction(method) and not getattr(method, "__isabstractmethod__", False):
+                    setattr(cls, name, guarded_provider_method(method))
         impl = cls.__dict__.get("execute")
         if impl is not None and not getattr(impl, "__isabstractmethod__", False):
-            # Cache is outermost: a hit skips both the live call and its event
-            # emission. Instrumentation wraps the raw implementation beneath it.
-            cls.execute = _cache_execute(_instrument_execute(impl))
+            # Verified cache hits are free. Every live call is governed BEFORE
+            # optional event instrumentation, including when events cannot load.
+            cls.execute = _cache_execute(guarded_execute(_instrument_execute(impl)))
 
     # --- Identity (override in subclasses) ---
     name: str = ""

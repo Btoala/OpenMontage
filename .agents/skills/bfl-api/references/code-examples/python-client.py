@@ -354,6 +354,8 @@ class BFLClient:
         **kwargs,
     ) -> Dict[str, Any]:
         """Make HTTP request with retry logic."""
+        if method.upper() not in {"GET", "HEAD"}:
+            raise RuntimeError("Paid reference example disabled; use an approved OpenMontage BFL tool")
         last_exception = None
 
         for attempt in range(max_retries):

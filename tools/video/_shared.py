@@ -593,6 +593,8 @@ def upload_image_heygen(image_path: str, api_key: str) -> str:
 
 
 def generate_heygen_video(inputs: dict[str, Any]) -> ToolResult:
+    from lib.spending import require_active_spend
+    require_active_spend()
     import requests
 
     api_key = os.environ.get("HEYGEN_API_KEY")
@@ -666,6 +668,8 @@ def generate_heygen_video(inputs: dict[str, Any]) -> ToolResult:
 
 
 def generate_ltx_modal_video(inputs: dict[str, Any]) -> ToolResult:
+    from lib.spending import require_active_spend
+    require_active_spend()
     import base64
 
     import requests

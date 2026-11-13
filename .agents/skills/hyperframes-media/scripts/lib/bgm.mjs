@@ -110,6 +110,9 @@ export function generateBgmDetached({
   const baseMeta = { path: rel, mode: null, volume: hasVoice ? 0.8 : 0.9, pending: true };
 
   const lyriaConfigured = !!lyriaKey() && !!lyriaRecipe && existsSync(lyriaRecipe);
+  if (lyriaConfigured) {
+    throw new Error("Standalone cloud music is blocked. Use an approved OpenMontage music tool request.");
+  }
 
   // Make a backend runnable: prefer Lyria when configured (install google-genai
   // on demand), else ensure local MusicGen deps. Installs are synchronous here —
