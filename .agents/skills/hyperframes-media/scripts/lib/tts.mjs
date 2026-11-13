@@ -134,6 +134,9 @@ export async function synthesizeOne({
   wavAbs,
   hyperframesDir,
 }) {
+  if (provider !== "kokoro") {
+    throw new Error("Paid standalone TTS is blocked. Use an approved OpenMontage TTS tool request.");
+  }
   if (provider === "heygen") return synthesizeHeygen({ text, voiceId, lang, speed, wavAbs });
   if (provider === "elevenlabs") {
     const r = await spawnP(

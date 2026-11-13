@@ -104,6 +104,8 @@ def _raise_for_status(response: Any, context: str) -> None:
 
 def submit(endpoint: str, payload: dict[str, Any], api_key: str, timeout: int = 60) -> str:
     """Submit a generation request and return its prediction id."""
+    from lib.spending import require_active_spend
+    require_active_spend()
     import requests
 
     try:

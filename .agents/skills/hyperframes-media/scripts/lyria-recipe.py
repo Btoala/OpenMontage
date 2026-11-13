@@ -44,6 +44,7 @@ def parse_args() -> argparse.Namespace:
 
 
 async def generate_bgm(args: argparse.Namespace) -> dict:
+    raise RuntimeError("Standalone cloud music is blocked. Use an approved OpenMontage music tool request.")
     from google import genai
     from google.genai import types
 

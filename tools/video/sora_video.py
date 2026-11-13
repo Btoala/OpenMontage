@@ -176,7 +176,7 @@ class SoraVideo(BaseTool):
                 return ToolResult(success=False, error=f"Input reference not found: {reference}")
             payload["input_reference"] = {"image_url": self._file_to_data_uri(reference)}
 
-        client = OpenAI()
+        client = OpenAI(max_retries=0)
         try:
             video = client.videos.create_and_poll(**payload)
             video_id = self._get_video_id(video)
@@ -220,7 +220,7 @@ class SoraVideo(BaseTool):
 
         if cls._version_tuple(getattr(openai, "__version__", "")) < _MIN_OPENAI_VERSION:
             return False
-        return hasattr(OpenAI(), "videos")
+        return hasattr(OpenAI(max_retries=0), "videos")
 
     @staticmethod
     def _version_tuple(version: str) -> tuple[int, int, int]:

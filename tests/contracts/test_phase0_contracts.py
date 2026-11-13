@@ -261,7 +261,9 @@ class TestConfig:
 
     def test_load_from_yaml(self):
         config = OpenMontageConfig.load()
-        assert config.budget.total_usd == 10.0
+        assert config.budget.total_usd == 0.0
+        assert config.budget.max_action_usd == 0.0
+        assert config.budget.mode == BudgetMode.CAP
 
 
 # ---- Schemas ----

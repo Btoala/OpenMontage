@@ -308,7 +308,17 @@ Checkpoints persist pipeline state as JSON in the project's `pipeline/` director
 
 ## Budget Governance
 
-The `CostTracker` enforces spending controls across the pipeline.
+Paid execution is enforced by `lib/spending.py`, automatically installed around
+`BaseTool.execute()` outside optional event instrumentation. It requires an
+explicit, expiring, single-use approval for the exact request and reserves its
+reviewed maximum in an installation-wide SQLite ledger before calling a provider.
+Missing policy, unknown prices, unavailable accounting, and ambiguous billing
+block paid execution. The shipped allowance is **$0**.
+
+See [Spending controls](spending-controls.md) for setup, exact-request approval,
+reconciliation, coverage, tests and limits of application-level enforcement.
+The older `CostTracker` below remains a reporting/manual-accounting API; its
+JSON files and tool-wide approvals do **not** authorize production spending.
 
 ### Lifecycle
 
@@ -320,7 +330,7 @@ reserve(entry_id)          # locks budget
 reconcile(entry_id, $)     # records actual spend
 ```
 
-### Budget Modes
+### Legacy CostTracker Budget Modes
 
 | Mode | Behavior |
 |------|----------|
@@ -328,12 +338,16 @@ reconcile(entry_id, $)     # records actual spend
 | `warn` | Log warnings on overruns, allow execution |
 | `cap` | Reject operations that exceed remaining budget |
 
-### Controls
-- **Total budget** (default: $10.00)
-- **Reserve holdback** (default: 10%) — kept as safety margin
-- **Single-action approval threshold** (default: $0.50) — pause for approval above this
-- **New paid tool approval** — first-time use of any paid tool requires confirmation
-- Persists to `cost_log.json` per project
+### Enforced controls
+- **Total allowance**: `budget.total_usd`, default $0, shared across projects in this installation.
+- **Per-request ceiling**: `budget.max_action_usd`, default $0.
+- **Reserve holdback**: `budget.reserve_pct`, default 10%.
+- **Approval**: every paid request, regardless of its price or previous tool use.
+- **Failures/interruptions**: retain the reservation; reconcile provider evidence before retrying.
+- **Mode**: paid execution requires `cap`; legacy `warn`, `observe`, wildcard approvals
+  and environment disable flags cannot authorize it.
+- Authority persists in `.openmontage-spending/ledger.sqlite3`; legacy per-project
+  `cost_log.json` files remain reporting artifacts.
 
 ---
 

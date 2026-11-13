@@ -156,7 +156,7 @@ class ImageGen(BaseTool):
         from openai import OpenAI
         import base64
 
-        client = OpenAI()
+        client = OpenAI(max_retries=0)
         prompt = inputs["prompt"]
         size = f"{inputs.get('width', 1024)}x{inputs.get('height', 1024)}"
         model = inputs.get("model", "gpt-image-2")
