@@ -915,17 +915,21 @@ export const Explainer: React.FC<ExplainerProps> = (props) => {
             const totalFrames = durationInFrames;
 
             // Fade in
-            const fadeIn = interpolate(f, [0, fadeInDur], [0, baseVol], {
-              extrapolateLeft: "clamp",
-              extrapolateRight: "clamp",
-            });
+            const fadeIn = fadeInDur === 0
+              ? baseVol
+              : interpolate(f, [0, fadeInDur], [0, baseVol], {
+                  extrapolateLeft: "clamp",
+                  extrapolateRight: "clamp",
+                });
             // Fade out
-            const fadeOut = interpolate(
-              f,
-              [totalFrames - fadeOutDur, totalFrames],
-              [baseVol, 0],
-              { extrapolateLeft: "clamp", extrapolateRight: "clamp" }
-            );
+            const fadeOut = fadeOutDur === 0
+              ? baseVol
+              : interpolate(
+                  f,
+                  [totalFrames - fadeOutDur, totalFrames],
+                  [baseVol, 0],
+                  { extrapolateLeft: "clamp", extrapolateRight: "clamp" }
+                );
             return Math.min(fadeIn, fadeOut);
           }}
         />
