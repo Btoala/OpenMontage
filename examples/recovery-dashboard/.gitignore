@@ -1,0 +1,9 @@
+*
+!README.md
+!dashboard.template.html
+!inventory.schema.json
+!inventory.example.json
+!build.mjs
+!verify.mjs
+!DESIGN.md
+!.gitignore
