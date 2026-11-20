@@ -34,6 +34,7 @@ import contextlib
 import json
 import hashlib
 import logging
+import math
 import secrets
 import shutil
 import subprocess
@@ -57,7 +58,7 @@ from tools.base_tool import (
 
 class VideoCompose(BaseTool):
     name = "video_compose"
-    version = "0.1.0"
+    version = "0.1.1"
     tier = ToolTier.CORE
     capability = "video_post"
     provider = "ffmpeg"
@@ -104,7 +105,7 @@ class VideoCompose(BaseTool):
                 "type": "object",
                 "description": (
                     "Full asset_manifest artifact (required for render). "
-                    "Used to resolve asset IDs in cuts[].source to file paths."
+                    "Resolves cuts[].source and Remotion music asset IDs to file paths."
                 ),
             },
             "proposal_packet": {
@@ -854,6 +855,73 @@ class VideoCompose(BaseTool):
             timeline_cursor += duration
 
         return scenes
+
+    @staticmethod
+    def _resolve_music(
+        edit_decisions: dict[str, Any],
+        asset_lookup: dict[str, Any],
+    ) -> tuple[dict[str, Any] | None, str | None]:
+        """Adapt documented music to Remotion without changing other audio layers.
+
+        Canonical audio.music takes precedence over legacy top-level music,
+        including an explicit empty/null canonical block. Renderer-specific
+        defaults are retained when volume or fades are omitted.
+        """
+        audio = edit_decisions.get("audio")
+        music = (
+            audio["music"]
+            if isinstance(audio, dict) and "music" in audio
+            else edit_decisions.get("music")
+        )
+        if music is None or music == {}:
+            return None, None
+        if not isinstance(music, dict):
+            return None, "Music configuration must be an object."
+
+        asset_id = music.get("asset_id")
+        if "asset_id" in music:
+            if not isinstance(asset_id, str) or not asset_id.strip():
+                return None, "Music asset_id must be a non-empty string."
+            if asset_id not in asset_lookup:
+                return None, f"Music asset_id {asset_id!r} not found in asset_manifest."
+            source = asset_lookup[asset_id].get("path")
+            if not isinstance(source, str) or not source.strip():
+                return None, f"Music asset_id {asset_id!r} has no valid path in asset_manifest."
+        else:
+            source = music.get("src") or music.get("source") or music.get("path")
+            if not isinstance(source, str) or not source.strip():
+                return None, "Music requires an asset_id or a playable src/source/path."
+
+        resolved = dict(music, src=source)
+        # Keep unknown music options intact. Remove source aliases so staging
+        # cannot copy a stale alias in addition to the selected track.
+        resolved.pop("source", None)
+        resolved.pop("path", None)
+        numeric_fields = (
+            ("volume", "volume"),
+            ("fade_in_seconds", "fadeInSeconds"),
+            ("fade_out_seconds", "fadeOutSeconds"),
+            ("offset_seconds", "offsetSeconds"),
+            ("trim_before_seconds", "trimBeforeSeconds"),
+            ("trim_after_seconds", "trimAfterSeconds"),
+        )
+        for canonical, renderer_key in numeric_fields:
+            key = canonical if canonical in music else renderer_key
+            if key not in music:
+                continue
+            value = music[key]
+            if (
+                isinstance(value, bool)
+                or not isinstance(value, (int, float))
+                or not math.isfinite(value)
+                or value < 0
+                or (canonical == "volume" and value > 1)
+            ):
+                return None, f"Music {key} must be a finite number in " + (
+                    "[0, 1]." if canonical == "volume" else "[0, infinity)."
+                )
+            resolved[renderer_key] = value
+        return resolved, None
 
     @staticmethod
     def _file_uri_to_raw_path(uri: str) -> str:
@@ -1715,6 +1783,7 @@ class VideoCompose(BaseTool):
         if self._needs_remotion(resolved_cuts):
             remotion_inputs: dict[str, Any] = {
                 "edit_decisions": dict(edit_decisions, cuts=resolved_cuts),
+                "asset_manifest": asset_manifest,
                 "output_path": str(output_path),
             }
             if profile:
@@ -2040,6 +2109,21 @@ class VideoCompose(BaseTool):
         # Deep-copy props so we don't mutate the original
         props = json.loads(json.dumps(composition_data))
 
+        manifest = inputs.get("asset_manifest") or {}
+        music, music_error = self._resolve_music(
+            props, {asset["id"]: asset for asset in manifest.get("assets", [])}
+        )
+        if music_error:
+            return ToolResult(success=False, error=music_error)
+        if music is not None:
+            # CinematicRenderer reads top-level music; Explainer reads audio.music.
+            props["music"] = music
+            props["audio"] = dict(props.get("audio") or {}, music=music)
+        else:
+            props.pop("music", None)
+            if isinstance(props.get("audio"), dict):
+                props["audio"].pop("music", None)
+
         # Build a custom themeConfig from the playbook's actual colors.
         # This ensures every video gets a unique visual identity derived
         # from its production decisions — not picked from a preset menu.
@@ -2102,6 +2186,16 @@ class VideoCompose(BaseTool):
         staged_count = 0
         profile_name = inputs.get("profile")
         try:
+            if music is not None and not music["src"].startswith(("http://", "https://", "data:")):
+                source = music["src"]
+                if source.lower().startswith("file://"):
+                    source = self._file_uri_to_raw_path(source)
+                local_path = Path(source).expanduser()
+                public_root = public_dir if requested_public_dir else composer_dir / "public"
+                if local_path.is_file():
+                    music["src"] = str(local_path.resolve())
+                elif local_path.is_absolute() or not (public_root / source).is_file():
+                    raise ValueError(f"Music file not found: {source}")
             staged_count = self._stage_remotion_media(props, public_dir)
             if not staged_count and cleanup_public_dir:
                 public_dir = None
