@@ -19,10 +19,10 @@ from lib.media_profiles import ALL_PROFILES, AspectRatio, MediaProfile
 from tools.video.video_compose import VideoCompose
 
 
-pytestmark = pytest.mark.skipif(
+pytestmark = [pytest.mark.spending_controls, pytest.mark.skipif(
     os.environ.get("OPENMONTAGE_TEST_REMOTION") != "1",
     reason="opt-in local render: set OPENMONTAGE_TEST_REMOTION=1",
-)
+)]
 
 
 def run(command):

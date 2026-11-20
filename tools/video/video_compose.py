@@ -58,7 +58,7 @@ from tools.base_tool import (
 
 class VideoCompose(BaseTool):
     name = "video_compose"
-    version = "0.1.1"
+    version = "0.1.2"
     tier = ToolTier.CORE
     capability = "video_post"
     provider = "ffmpeg"
@@ -1824,27 +1824,15 @@ class VideoCompose(BaseTool):
                     return mux_result
                 render_result.data["has_mixed_audio"] = True
         else:
-            # --- FFmpeg fallback: only when Remotion is unavailable ---
-            options = inputs.get("options", {})
-            subtitle_burn = options.get("subtitle_burn", True)
-
-            # Resolve subtitle_path from edit_decisions if not provided
-            subtitle_path = inputs.get("subtitle_path")
-            if subtitle_burn and not subtitle_path:
-                ed_subs = edit_decisions.get("subtitles", {})
-                if ed_subs.get("enabled") and ed_subs.get("source"):
-                    subtitle_path = ed_subs["source"]
-
-            # Build compose inputs
-            compose_inputs = dict(inputs)
-            compose_inputs["edit_decisions"] = dict(edit_decisions, cuts=resolved_cuts)
-            compose_inputs["output_path"] = str(output_path)
-            if subtitle_path:
-                compose_inputs["subtitle_path"] = subtitle_path
-            if profile:
-                compose_inputs["profile"] = profile
-
-            render_result = self._compose(compose_inputs)
+            return ToolResult(
+                success=False,
+                error=(
+                    "Remotion was selected but its local runtime is unavailable. "
+                    "Restore the Remotion dependencies, or obtain explicit approval "
+                    "to change render_runtime. Rendering stopped before FFmpeg; "
+                    "music and other composition settings must not be silently lost."
+                ),
+            )
 
         # --- Post-render: mandatory final self-review ---
         if render_result.success and output_path.exists():
@@ -2182,7 +2170,7 @@ class VideoCompose(BaseTool):
         # Everything from staging onward is guarded, so a failure during props
         # writing or command setup — not just during the render — still removes
         # the staged user media instead of leaving it on disk.
-        props_path = output_path.parent / ".remotion_props.json"
+        props_path = output_path.parent / f".remotion-{secrets.token_hex(8)}.remotion_props.json"
         staged_count = 0
         profile_name = inputs.get("profile")
         try:

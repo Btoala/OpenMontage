@@ -72,3 +72,23 @@ OPENMONTAGE_TEST_REMOTION=1 REMOTION_TEST_BROWSER=/path/to/chromium \
 No dependencies are automatically installed. The full-render tests set npm
 offline mode, use only synthetic local inputs, and inspect decoded output with
 FFmpeg. `OPENMONTAGE_MUSIC_EVIDENCE_DIR` optionally saves proof files and metrics.
+
+
+## Integration with spending controls
+
+Local composition does not require a paid-call approval or a working spending
+ledger. Generating a new music asset with a paid provider is a separate gated
+request. A local render cannot authorize a later or nested paid request.
+The checked-in total and per-request allowances remain zero.
+
+When `render_runtime` is `remotion` but local Remotion dependencies are absent,
+rendering stops before FFmpeg. Restore the dependencies or review and explicitly
+change the runtime; music settings must not disappear through an automatic
+fallback. Each templated render uses a separate temporary props file so renders
+to different outputs in the same directory do not overwrite one another's music.
+
+Music tests carry the `spending_controls` marker, ensuring the ordinary provider
+unit-test authorization mock cannot hide integration failures. Run the combined
+synthetic suite with `python -m pytest -q tests/tools/test_combined_music_spending.py`.
+Mocks produce fixtures only; their synthetic approvals never contact providers.
+Full Remotion verification still requires the six opt-in browser tests above.

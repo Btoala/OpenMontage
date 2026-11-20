@@ -22,7 +22,9 @@ from tools.video.video_compose import VideoCompose
 ROOT = Path(__file__).resolve().parents[2]
 HELPER = Path(__file__).with_name("remotion_music_envelope.cjs")
 NODE_READY = shutil.which("node") and (ROOT / "remotion-composer/node_modules/typescript").is_dir()
-pytestmark = pytest.mark.skipif(not NODE_READY, reason="existing Node/Remotion packages required; no auto-install")
+pytestmark = [pytest.mark.spending_controls, pytest.mark.skipif(
+    not NODE_READY, reason="existing Node/Remotion packages required; no auto-install"
+)]
 
 
 def envelope(family, music):

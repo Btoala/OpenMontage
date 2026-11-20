@@ -13,6 +13,8 @@ import pytest
 
 from tools.video.video_compose import VideoCompose
 
+pytestmark = pytest.mark.spending_controls
+
 
 @pytest.fixture
 def capture_render(monkeypatch):
@@ -250,7 +252,7 @@ def test_render_failure_cleans_music_and_keeps_original(tmp_path, capture_render
     assert not result.success and "synthetic failure" in result.error
     assert music.read_bytes() == b"keep"
     assert not list(tmp_path.glob(".remotion-public-*"))
-    assert not (tmp_path / ".remotion_props.json").exists()
+    assert not list(tmp_path.glob("*.remotion_props.json"))
 
 
 def test_cache_does_not_reuse_old_silent_render():
