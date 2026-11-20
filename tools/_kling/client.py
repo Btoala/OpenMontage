@@ -135,6 +135,9 @@ class KlingClient:
         raise TimeoutError(f"Kling Turbo task {task_id} timed out after {timeout_seconds}s")
 
     def _request(self, method: str, path: str, **kwargs: Any) -> dict[str, Any]:
+        if method.lower() not in {"get", "head"}:
+            from lib.spending import require_active_spend
+            require_active_spend()
         url = self._url(path)
         last_error: KlingAPIError | None = None
         # A lost create response can still mean a paid task was accepted.

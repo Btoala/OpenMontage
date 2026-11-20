@@ -402,8 +402,8 @@ export const Soundtrack: React.FC<{
   const frame = useCurrentFrame();
   const { durationInFrames, fps } = useVideoConfig();
 
-  const fadeInFrames = Math.max(1, Math.round(fadeInSeconds * fps));
-  const fadeOutFrames = Math.max(1, Math.round(fadeOutSeconds * fps));
+  const fadeInFrames = Math.max(0, Math.round(fadeInSeconds * fps));
+  const fadeOutFrames = Math.max(0, Math.round(fadeOutSeconds * fps));
   const trimBefore =
     trimBeforeSeconds !== undefined
       ? Math.round(trimBeforeSeconds * fps)
@@ -413,19 +413,25 @@ export const Soundtrack: React.FC<{
       ? Math.round(trimAfterSeconds * fps)
       : undefined;
 
-  const fadeIn = interpolate(frame, [0, fadeInFrames], [0, volume], {
-    extrapolateLeft: "clamp",
-    extrapolateRight: "clamp",
-  });
-  const fadeOut = interpolate(
-    frame,
-    [durationInFrames - fadeOutFrames, durationInFrames],
-    [volume, 0],
-    {
-      extrapolateLeft: "clamp",
-      extrapolateRight: "clamp",
-    },
-  );
+  const fadeIn =
+    fadeInFrames === 0
+      ? volume
+      : interpolate(frame, [0, fadeInFrames], [0, volume], {
+          extrapolateLeft: "clamp",
+          extrapolateRight: "clamp",
+        });
+  const fadeOut =
+    fadeOutFrames === 0
+      ? volume
+      : interpolate(
+          frame,
+          [durationInFrames - fadeOutFrames, durationInFrames],
+          [volume, 0],
+          {
+            extrapolateLeft: "clamp",
+            extrapolateRight: "clamp",
+          },
+        );
 
   return (
     <Audio

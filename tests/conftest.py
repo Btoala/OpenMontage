@@ -113,6 +113,9 @@ def _block_network():
 
 def pytest_configure(config):
     config.addinivalue_line(
+        "markers", "spending_controls: integration tests using the real spending authority"
+    )
+    config.addinivalue_line(
         "markers",
         "live_api: test performs a real, billable API call. Skipped unless "
         f"{_ALLOW_ENV_FLAG}=1 is set.",
@@ -129,3 +132,25 @@ def pytest_collection_modifyitems(config, items):
     for item in items:
         if "live_api" in item.keywords:
             item.add_marker(skip)
+
+
+@pytest.fixture(autouse=True)
+def _mock_authority_for_provider_unit_tests(request, monkeypatch):
+    """Legacy adapter tests mock billing just as they mock provider transports.
+
+The spending_controls suite MUST exercise real approval/reservation behavior.
+No production environment flag or test-mode branch exists in spending.py.
+Live tests also retain the real gate. Outbound test sockets remain blocked.
+"""
+    if "spending_controls" in request.keywords or "live_api" in request.keywords:
+        yield
+        return
+    from lib import spending
+    context = spending._TOKEN.set("offline-provider-unit-test")
+    monkeypatch.setattr(spending.Ledger, "reserve", lambda *a, **k: None)
+    monkeypatch.setattr(spending.Ledger, "finish", lambda *a, **k: None)
+    monkeypatch.setattr(spending, "require_active_spend", lambda *a, **k: None)
+    try:
+        yield
+    finally:
+        spending._TOKEN.reset(context)

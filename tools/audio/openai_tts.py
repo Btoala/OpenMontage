@@ -158,7 +158,7 @@ class OpenAITTS(BaseTool):
                 ),
             )
 
-        client = OpenAI()
+        client = OpenAI(max_retries=0)
         output_path = Path(inputs.get("output_path", f"openai_tts.{fmt}"))
         output_path.parent.mkdir(parents=True, exist_ok=True)
 

@@ -113,6 +113,8 @@ class RealtimeAudioSession:
             raise ValueError("Unsupported realtime provider")
 
     def __enter__(self):
+        from lib.spending import require_active_spend
+        require_active_spend()
         if self.provider == "elevenlabs":
             r = requests.post(
                 "https://api.elevenlabs.io/v1/convai/realtime/client_secrets",

@@ -187,6 +187,7 @@ if (cmd === "overlay") {
     next: "READ it — red box on the target? If off, redo region/final with corrected strips.",
   });
 } else if (cmd === "auto") {
+  throw new Error("Ungoverned Gemini billing is blocked. Use the local overlay/region/final/mark workflow.");
   // OPTIONAL fast path — only if a strong detector key happens to exist. Never assume it.
   const key = process.env.GEMINI_API_KEY;
   if (!key) {

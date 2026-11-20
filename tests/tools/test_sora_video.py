@@ -96,7 +96,8 @@ def test_sora_video_executes_with_current_create_and_poll_sdk_surface(monkeypatc
             return FakeContent()
 
     class FakeOpenAI:
-        def __init__(self):
+        def __init__(self, *, max_retries):
+            assert max_retries == 0
             self.videos = FakeVideos()
 
     fake_openai = types.ModuleType("openai")

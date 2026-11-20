@@ -35,6 +35,7 @@ class LLMConfig(BaseModel):
 class BudgetConfig(BaseModel):
     mode: BudgetMode = BudgetMode.WARN
     total_usd: float = 10.0
+    max_action_usd: float = 0.0
     reserve_pct: float = 0.10
     single_action_approval_usd: float = 0.50
     require_approval_for_new_paid_tool: bool = True
