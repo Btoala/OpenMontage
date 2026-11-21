@@ -16,6 +16,7 @@ import { ProductReveal, ProductRevealProps } from "./components/ProductReveal";
 import { CaptionOverlay, WordCaption } from "./components/CaptionOverlay";
 import { CollageBurst, CollageBurstProps } from "./CollageBurst";
 import { LyricOverlay, LyricOverlayProps, calculateLyricOverlayMetadata } from "./LyricOverlay";
+import { GuardShot, GuardShotProps } from "./sampler/GuardShot";
 
 // ---------------------------------------------------------------------------
 // Theme System — prevents every video from looking like dark fintech
@@ -331,6 +332,33 @@ export const Root: React.FC = () => {
           fadeOutSeconds: 1.5,
           overlay: true,
         } as EndTagProps}
+      />
+      <Composition
+        id="GuardShotLayers"
+        component={GuardShot}
+        durationInFrames={90}
+        fps={30}
+        width={1080}
+        height={1920}
+        defaultProps={{ plate: "layers", caption: "was terrified" } as GuardShotProps}
+      />
+      <Composition
+        id="GuardShotThree"
+        component={GuardShot}
+        durationInFrames={90}
+        fps={30}
+        width={1080}
+        height={1920}
+        defaultProps={{ plate: "image", plateSrc: "hard-hat-history-sampler/plate_bank_three.png", caption: "was terrified" } as GuardShotProps}
+      />
+      <Composition
+        id="GuardShotWorld"
+        component={GuardShot}
+        durationInFrames={90}
+        fps={30}
+        width={1080}
+        height={1920}
+        defaultProps={{ plate: "image", plateSrc: "hard-hat-history-sampler/plate_bank_world.png", caption: "was terrified" } as GuardShotProps}
       />
     </>
   );
