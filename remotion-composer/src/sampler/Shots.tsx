@@ -6,14 +6,14 @@ const W = 1080;
 const H = 1920;
 const PUB = "hard-hat-history-sampler";
 
-type Actor = Partial<CharacterProps> & { who: "guard" | "thief" | "sheriff" | "shop" };
-type ShotDef = {
+export type Actor = Partial<CharacterProps> & { who: "guard" | "thief" | "sheriff" | "shop" };
+export type ShotDef = {
   plate: string; blur?: number; caption: string; overlay?: string; title?: string;
   actors?: Actor[]; flatBuckets?: { x: number; feetY: number; scale: number; boots?: boolean; silhouette?: boolean }[];
   /** representative frame (30fps) inside the shot */ frame: number;
 };
 
-const cast = (a: Actor) => {
+export const cast = (a: Actor) => {
   const c = COLORS[a.who];
   const hat = a.hat ?? (a.who === "guard" ? "cap" : a.who === "sheriff" ? "sheriff" : a.who === "thief" ? "flatcap" : "none");
   return { body: c.body, trim: c.trim, hatColor: c.hat, hat, x: 540, feetY: 1600, ...a } as CharacterProps;
@@ -37,7 +37,7 @@ export const SHOTS: Record<string, ShotDef> = {
   sc11: { plate: "sc9", blur: 9, caption: "Bucket.", frame: 60, actors: [{ who: "thief", x: 540, feetY: 2050, scale: 1.75, emotion: "deadpan", arms: "down", hat: "none" }] },
 };
 
-const Grain: React.FC = () => (
+export const Grain: React.FC = () => (
   <svg width={W} height={H} style={{ position: "absolute", inset: 0, mixBlendMode: "overlay", opacity: 0.1 }}>
     <filter id="g"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed={7} stitchTiles="stitch" /></filter>
     <rect width={W} height={H} filter="url(#g)" />
