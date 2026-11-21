@@ -17,6 +17,7 @@ import { CaptionOverlay, WordCaption } from "./components/CaptionOverlay";
 import { CollageBurst, CollageBurstProps } from "./CollageBurst";
 import { LyricOverlay, LyricOverlayProps, calculateLyricOverlayMetadata } from "./LyricOverlay";
 import { GuardShot, GuardShotProps } from "./sampler/GuardShot";
+import { ContactSheet, ShotPreview } from "./sampler/Shots";
 
 // ---------------------------------------------------------------------------
 // Theme System — prevents every video from looking like dark fintech
@@ -360,6 +361,8 @@ export const Root: React.FC = () => {
         height={1920}
         defaultProps={{ plate: "image", plateSrc: "hard-hat-history-sampler/plate_bank_world.png", caption: "was terrified" } as GuardShotProps}
       />
+      <Composition id="SamplerContactSheet" component={ContactSheet} durationInFrames={1} fps={30} width={2160} height={1280} />
+      <Composition id="SamplerShot" component={ShotPreview} durationInFrames={90} fps={30} width={1080} height={1920} defaultProps={{ id: "sc3" }} />
     </>
   );
 };
