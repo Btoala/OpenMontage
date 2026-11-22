@@ -2,6 +2,7 @@ import React from "react";
 import { AbsoluteFill, Img, Sequence, staticFile, useCurrentFrame, interpolate, Easing } from "remotion";
 import { Character, FlatBucket, CharacterProps } from "./Characters";
 import { SHOTS, cast, Grain } from "./Shots";
+import { CAPTION_CUES } from "./captionCues";
 
 /** Mudlow sampler: 25s, 30fps, 1080x1920. Hard cuts only; every value is a pure function of the frame. */
 const W = 1080, H = 1920, FPS = 30, PUB = "hard-hat-history-sampler";
@@ -9,16 +10,8 @@ const T: [string, number, number][] = [
   ["sc1", 0, 3.0], ["sc2", 3.0, 5.2], ["sc3", 5.2, 7.6], ["sc4", 7.6, 9.4], ["sc5", 9.4, 11.0], ["sc6", 11.0, 12.8],
   ["sc7", 12.8, 15.0], ["sc8", 15.0, 17.4], ["sc9", 17.4, 19.6], ["sc10", 19.6, 22.6], ["sc11", 22.6, 25.0],
 ];
-/** PROVISIONAL caption timing (estimated from script sections; re-align once real audio exists). */
-export const CAPTIONS: [string, number, number][] = [
-  ["This bucket", 0.0, 1.4], ["robbed a bank.", 1.4, 3.0],
-  ["Mudlow's only guard", 3.4, 5.0], ["was terrified", 5.0, 6.2], ["of buckets.", 6.2, 7.2],
-  ["So the thief", 7.8, 9.0], ["bought forty.", 9.0, 10.4],
-  ["By noon,", 11.0, 12.0], ["the guard had", 12.0, 13.0], ["fled screaming.", 13.0, 14.6],
-  ["The sheriff counted", 15.4, 17.0], ["forty-one buckets.", 17.0, 19.0],
-  ["The last one", 19.6, 21.0], ["was the thief.", 21.0, 22.6],
-  ["Bucket.", 23.2, 25.0],
-];
+/** Caption timing from measured speech boundaries of the voiceover lines (see captionCues.ts). */
+export const CAPTIONS: [string, number, number][] = CAPTION_CUES;
 
 type Cam = { k: "none" | "push" | "pan" | "tilt"; a?: number; b?: number; dx?: number; dy?: number };
 const CAM: Record<string, Cam> = {
